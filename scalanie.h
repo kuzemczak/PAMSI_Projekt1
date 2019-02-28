@@ -16,5 +16,5 @@ int merge_sort(std::vector<T> &V, int begin, int end)
 		merge_sort(q, 0, q.size());
 		V = merge(p, q, V.size());
 	}
-	return 0;
+	return 1;
 }
