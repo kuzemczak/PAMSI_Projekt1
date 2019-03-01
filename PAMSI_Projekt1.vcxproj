@@ -154,7 +154,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="introspektywne.h" />
+    <ClInclude Include="kopcowanie.h" />
     <ClInclude Include="quicksort.h" />
+    <ClInclude Include="randutils.hpp" />
     <ClInclude Include="scalanie.h" />
     <ClInclude Include="vectorAddon.h" />
   </ItemGroup>
