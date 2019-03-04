@@ -8,11 +8,11 @@
 template<typename T>
 int quicksort(std::vector<T> &V, int begin, int end)
 {
-	if (begin < end)
+	if (begin < end - 1)
 	{
 		int i = divideVector(V, begin, end);
-		quicksort(V, begin, i-1);
-		quicksort(V, i+1, end);
+		quicksort(V, begin, i);
+		quicksort(V, i + 1, end);
 	}
 
 	return 0;
@@ -21,21 +21,21 @@ int quicksort(std::vector<T> &V, int begin, int end)
 template<typename T>
 int divideVector(std::vector<T> &V, int begin, int end)
 {
-	int index = static_cast<int>(begin + (end - begin) / 2);
+	int index = static_cast<int>(begin + (end - 1 - begin) / 2);
 	int value = V[index];
 
-	iter_swap(V.begin() + index, V.begin() + end);
+	swap(V[index], V[end - 1]);
 
 	int pos = begin;
 
-	for (int i = begin; i < end; i++)
+	for (int i = begin; i < end - 1; i++)
 	{
 		if (V[i] < value)
 		{
-			iter_swap(V.begin() + i, V.begin() + pos);
+			swap(V[i], V[pos]);
 			pos++;
 		}
 	}
-	iter_swap(V.begin() + pos, V.begin() + end);
+	swap(V[pos], V[end - 1]);
 	return pos;
 }
