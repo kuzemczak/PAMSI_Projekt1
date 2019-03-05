@@ -28,30 +28,7 @@ std::vector<T> subVector(std::vector<T> &V, int start, int end)
 	return ret;
 }
 
-template<typename T>
-std::vector<T> merge(std::vector<T> &p, std::vector<T> &q, int mergedSize)
-{
-	int pcntr = 0, qcntr = 0;
-	std::vector<T> ret;
 
-	while (ret.size() < mergedSize)
-	{
-		if(pcntr == p.size())
-			ret.insert(ret.end(), q.begin() + qcntr, q.end());
-		else if (qcntr == q.size())
-			ret.insert(ret.end(), p.begin() + pcntr, p.end());
-		else if (p[pcntr] > q[qcntr])
-		{
-			ret.push_back(q[qcntr++]);
-		}
-		else
-		{
-			ret.push_back(p[pcntr++]);
-		}
-	}
-	
-	return ret;
-}
 
 template<typename T>
 void value_swap(std::vector<T> &V, int i, int j)

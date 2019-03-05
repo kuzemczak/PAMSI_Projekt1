@@ -21,6 +21,9 @@ int quicksort(std::vector<T> &V, int begin, int end)
 template<typename T>
 int divideVector(std::vector<T> &V, int begin, int end)
 {
+	if (begin == end)
+		return begin;
+
 	int index = static_cast<int>(begin + (end - 1 - begin) / 2);
 	int value = V[index];
 
