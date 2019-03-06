@@ -30,11 +30,3 @@ std::vector<T> subVector(std::vector<T> &V, int start, int end)
 
 
 
-template<typename T>
-void value_swap(std::vector<T> &V, int i, int j)
-{
-	V[i] ^= V[j];
-	V[j] ^= V[i];
-	V[i] ^= V[j];
-}
-
