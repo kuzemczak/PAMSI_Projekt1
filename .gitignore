@@ -331,3 +331,7 @@ ASALocalRun/
 
 *.vcxproj
 *.vcxproj.filters
+
+# Text files
+*.txt
+*.csv
