@@ -4,8 +4,13 @@
 #include <random>
 #include <iostream>
 #include <string>
+#include <fstream>
 
 #include "randutils.hpp"
+
+#define CONSOLE_OUTPUT
+//#define FILE_COMMENT_OUTPUT
+#define FILE_OUTPUT
 
 template<typename T>
 bool checkSorted(T * V, int size)
@@ -13,11 +18,9 @@ bool checkSorted(T * V, int size)
 	for (int i = 1; i < size; i++)
 		if (V[i - 1] > V[i])
 		{
-			cout << "NOT OK\n";
 			return false;
 		}
 
-	cout << "OK\n";
 	return true;
 }
 
@@ -60,23 +63,57 @@ int runTests(int(*testedFunction)(int*, int, int), std::string name)
 	int sizes[5] = { 10000, 50000, 100000, 500000, 1000000 };
 	double partSorted[7] = { 0, 0.25, 0.50, 0.75, 0.95, 0.99, 0.997 };
 	char cases[8] = { 0,0,0,0,0,0,0,1 };
-
 	randutils::mt19937_rng rng;
+	std::ofstream file;
+	file.open("wyniki.csv", ios_base::app);
 
+#ifdef FILE_OUTPUT
+	file << "\n" << name << "\n";
+#endif
 	
-	for (int l = 0; l < 8; l++)
+	for (int k = 0; k < 5; k++)
 	{
-		std::cout << name << " of a vector with ";
-		if (cases[l])
-			std::cout << "All reverse sorted:\n";
-		else
-			std::cout << partSorted[l] * 100 << "% first elements sorted:\n";
-		std::cout << "\taverage time for:\n";
-		for (int k = 0; k < 5; k++)
+		for (int l = 0; l < 8; l++)
 		{
+#ifdef CONSOLE_OUTPUT 
+			std::cout << name << " of a vector with ";
+#endif
+#ifdef FILE_COMMENT_OUTPUT 
+			file << name << " of a vector with ";
+#endif
+			if (cases[l])
+			{
+#ifdef CONSOLE_OUTPUT 
+				std::cout << "All reverse sorted:\n";
+#endif
+#ifdef FILE_OUTPUT 
+				file << "All_rev,";
+#endif
+			}
+			else
+			{
+#ifdef CONSOLE_OUTPUT 
+				std::cout << partSorted[l] * 100 << "% first elements sorted:\n";
+#endif
+#ifdef FILE_OUTPUT 
+				file << partSorted[l] * 100 << "%\,";
+#endif
+			}
+#ifdef CONSOLE_OUTPUT 
+			std::cout << "\taverage time for:\n";
+#endif
+#ifdef FILE_COMMENT_OUTPUT 
+			file << "\taverage time for:\n";
+#endif
 			double mean = 0;
-			 std::cout << "\t\t" << sizes[k] << " elements: ";
-			for (int i = 0; i < 100; i++)
+#ifdef CONSOLE_OUTPUT 
+			std::cout << "\t\t" << sizes[k] << " elements: ";
+#endif
+#ifdef FILE_OUTPUT 
+			file << sizes[k] << ",";
+#endif
+			int iterations = 100;
+			for (int i = 0; i < iterations; i++)
 			{
 				int *tab = new int[sizes[k]];
 				for (int j = 0; j < sizes[k]; j++)
@@ -92,13 +129,33 @@ int runTests(int(*testedFunction)(int*, int, int), std::string name)
 						tab[j] = sizes[k] - j;
 				}
 
-				mean = (mean * (double)i + (double)testSortingTime(testedFunction, tab, 0, sizes[k])) / ((double)i + 1);
+				mean += testSortingTime(testedFunction, tab, 0, sizes[k]);
+				if (!checkSorted(tab, sizes[k]))
+				{
+#ifdef CONSOLE_OUTPUT 
+					std::cout << "Sorting failed. Size: " << sizes[k]
+						<< ", iteration: " << i << std::endl;
+#endif
+#ifdef FILE_COMMENT_OUTPUT 
+					file << "Sorting failed. Size: " << sizes[k]
+						<< ", iteration: " << i << std::endl;
+#endif
+					file.close();
+					return 1;
+				}
 				delete tab;
 			}
+			mean /= (double)iterations;
 
+#ifdef CONSOLE_OUTPUT 
 			std::cout << "\t" << mean << " ms\n";
+#endif
+#ifdef FILE_OUTPUT 
+			file << mean << "\n";
+#endif
 		}
 	}
+	file.close();
 
 	return 0;
 }
