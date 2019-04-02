@@ -1,4 +1,5 @@
-#pragma once
+#ifndef INSERTIONSORT_H
+#define INSERTIONSORT_H
 
 template <typename T>
 int insertion_sort(T * V, int begin, int end)
@@ -16,3 +17,5 @@ int insertion_sort(T * V, int begin, int end)
 
 	return 0;
 }
+
+#endif

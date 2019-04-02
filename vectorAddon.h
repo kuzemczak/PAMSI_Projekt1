@@ -1,4 +1,6 @@
-#pragma once
+#ifndef VECTORADDON_H
+#define VECTORADDON_H
+
 
 #include <iostream>
 
@@ -15,5 +17,13 @@ std::ostream& operator<< (std::ostream& out, const std::vector<T>& v) {
 	return out;
 }
 
+template<typename T>
+void Swap(T & v0, T & v1)
+{
+	T tmp = v0;
+	v0 = v1;
+	v1 = tmp;
+}
 
+#endif
 

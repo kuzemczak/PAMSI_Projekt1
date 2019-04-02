@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TESTS_H
+#define TESTS_H
 
 #include <chrono>
 #include <random>
@@ -7,11 +8,12 @@
 #include <fstream>
 
 #include "randutils.hpp"
+#include "quicksort.h"
 
 #define CONSOLE_OUTPUT
-//#define FILE_COMMENT_OUTPUT
 #define FILE_OUTPUT
 
+// funkcja sprawdzajaca posortowanie tablicy
 template<typename T>
 bool checkSorted(T * V, int size)
 {
@@ -24,6 +26,7 @@ bool checkSorted(T * V, int size)
 	return true;
 }
 
+// funkcja testujaca czas wykonywania funkcji sortujacej.
 template <typename T>
 int testSortingTime(int(*testedFunction)(T*, int, int), T * V = NULL, int begin = 0, int end = 0)
 {
@@ -65,84 +68,85 @@ int runTests(int(*testedFunction)(int*, int, int), std::string name)
 	char cases[8] = { 0,0,0,0,0,0,0,1 };
 	randutils::mt19937_rng rng;
 	std::ofstream file;
-	file.open("wyniki.csv", ios_base::app);
+	file.open("wyniki.csv", std::ios_base::app);
 
 #ifdef FILE_OUTPUT
 	file << "\n" << name << "\n";
 #endif
-	
-	for (int k = 0; k < 5; k++)
+
+#ifdef FILE_OUTPUT
+	file << name;
+	for (int i = 0; i < 5; i++)
+		file << "\t" << sizes[i];
+	file << std::endl;
+#endif // FILE_OUTPUT
+
+	// petla wyboru przypadku (0%, 25% itd.)
+	for (int l = 0; l < 8; l++)
 	{
-		for (int l = 0; l < 8; l++)
+		// wypisanie przypadku
+		if (cases[l])
 		{
 #ifdef CONSOLE_OUTPUT 
-			std::cout << name << " of a vector with ";
-#endif
-#ifdef FILE_COMMENT_OUTPUT 
-			file << name << " of a vector with ";
-#endif
-			if (cases[l])
-			{
-#ifdef CONSOLE_OUTPUT 
-				std::cout << "All reverse sorted:\n";
+			std::cout << "All reverse sorted:\n";
 #endif
 #ifdef FILE_OUTPUT 
-				file << "All_rev,";
+			file << "All_rev";
 #endif
-			}
-			else
-			{
+		}
+		else
+		{
 #ifdef CONSOLE_OUTPUT 
-				std::cout << partSorted[l] * 100 << "% first elements sorted:\n";
+			std::cout << partSorted[l] * 100 << "% first elements sorted:\n";
 #endif
 #ifdef FILE_OUTPUT 
-				file << partSorted[l] * 100 << "%\,";
+			file << partSorted[l] * 100 << "%";
 #endif
-			}
+		}
 #ifdef CONSOLE_OUTPUT 
-			std::cout << "\taverage time for:\n";
+		std::cout << "\taverage time for:\n";
 #endif
-#ifdef FILE_COMMENT_OUTPUT 
-			file << "\taverage time for:\n";
-#endif
-			double mean = 0;
+		// petla wyboru wielkosci tablicy
+		for (int k = 0; k < 5; k++)
+		{
 #ifdef CONSOLE_OUTPUT 
 			std::cout << "\t\t" << sizes[k] << " elements: ";
 #endif
-#ifdef FILE_OUTPUT 
-			file << sizes[k] << ",";
-#endif
-			int iterations = 100;
+			double mean = 0;      // srednia
+			int iterations = 100;	// liczba prob
+
+			// petla wywolujaca funkcje sortujaca
 			for (int i = 0; i < iterations; i++)
 			{
 				int *tab = new int[sizes[k]];
+				
+				// petla wypelniajaca tablice
 				for (int j = 0; j < sizes[k]; j++)
 				{
 					if (!cases[l])
 					{
-						if (j < static_cast<int>(partSorted[l] * sizes[k]))
-							tab[j] = j;
-						else
 							tab[j] = rng.uniform(-1000000, 1000000);
 					}
 					else
 						tab[j] = sizes[k] - j;
 				}
+				if (!cases[l]) // sortowanie czesci tablicy
+					quicksort(tab, 0, partSorted[l] * sizes[k]);
+
 
 				mean += testSortingTime(testedFunction, tab, 0, sizes[k]);
+
+				// sprawdzenie posortowania tablicy
 				if (!checkSorted(tab, sizes[k]))
 				{
 #ifdef CONSOLE_OUTPUT 
 					std::cout << "Sorting failed. Size: " << sizes[k]
 						<< ", iteration: " << i << std::endl;
 #endif
-#ifdef FILE_COMMENT_OUTPUT 
-					file << "Sorting failed. Size: " << sizes[k]
-						<< ", iteration: " << i << std::endl;
-#endif
 					file.close();
 					return 1;
 				}
+
 				delete tab;
 			}
 			mean /= (double)iterations;
@@ -151,11 +155,16 @@ int runTests(int(*testedFunction)(int*, int, int), std::string name)
 			std::cout << "\t" << mean << " ms\n";
 #endif
 #ifdef FILE_OUTPUT 
-			file << mean << "\n";
+			file << "\t" << mean;
 #endif
 		}
+#ifdef FILE_OUTPUT
+		file << std::endl;
+#endif
 	}
 	file.close();
 
 	return 0;
 }
+
+#endif
