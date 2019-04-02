@@ -7,6 +7,7 @@
 
 int depth = 0, max_depth = 0;
 std::vector<double> pivots;
+std::vector<int> weights;
 /*
 * Wybiera element w po³owie wektora (pivot) i dzieli go na
 * dwa podzbiory sk³adaj¹ce siê z elementów wiêkszych
@@ -45,8 +46,8 @@ int divideVector(T *V, int begin, int end)
 	Swap(V[pos], V[end - 1]);
 
 	// testy, kontrola odleglosci pivota od srodka podzbioru
-	//for(int i = 0; i < (end - begin)/100; i++)
-		//pivots.push_back(fabs(((double)((double)end - (double)pos)/ (double)((double)end - (double)begin))-0.5));
+	pivots.push_back(fabs(((double)((double)end - (double)pos)/ (double)((double)end - (double)begin))-0.5));
+	weights.push_back((end - begin) / 10);
 
 	return pos;
 }
@@ -61,9 +62,16 @@ int quicksort(T *V, int begin, int end)
 		// wyznaczenie pivota i podzielenie podzbioru
 		int i = divideVector(V, begin, end);
 
+		// kontorla glebokosci rekurencji
+		//depth++;
+		//if (depth > max_depth)
+			//max_depth = depth;
+
 		// rekurencja dla dwoch czesci podzbioru
 		quicksort(V, begin, i);
 		quicksort(V, i + 1, end);
+
+		//depth--;
 	}
 
 	return 0;
@@ -72,15 +80,20 @@ int quicksort(T *V, int begin, int end)
 // testy, wyswietlenie zmiennych kontrolujacych
 void showPivots()
 {
-	sort(pivots.begin(), pivots.end());
-	double mean = 0;
-	for (double i : pivots)
-		mean += i;
-	mean /= pivots.size();
+	double mean = 0, mean1 = 0;
+	int weightSum = 0;
+	for (int i = 0; i < pivots.size(); i++)
+	{
+		mean += pivots[i] * weights[i];
+		weightSum += weights[i];
+	}
+	mean /= weightSum;
 	std::cout << mean;
+	std::cout << "\t" << /*max_*/depth << std::endl;
 	pivots.clear();
-	std::cout << "\t" << max_depth << std::endl;
 	max_depth = 0;
+	weightSum = 0;
+	weights.clear();
 	depth = 0;
 }
 

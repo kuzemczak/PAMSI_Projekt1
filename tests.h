@@ -84,6 +84,7 @@ int runTests(int(*testedFunction)(int*, int, int), std::string name)
 	// petla wyboru przypadku (0%, 25% itd.)
 	for (int l = 0; l < 8; l++)
 	{
+	//int l = 0; // wybor szczegolnego
 		// wypisanie przypadku
 		if (cases[l])
 		{
@@ -109,6 +110,7 @@ int runTests(int(*testedFunction)(int*, int, int), std::string name)
 		// petla wyboru wielkosci tablicy
 		for (int k = 0; k < 5; k++)
 		{
+		// int k = 3; // wybor szczegolnego
 #ifdef CONSOLE_OUTPUT 
 			std::cout << "\t\t" << sizes[k] << " elements: ";
 #endif
@@ -131,11 +133,10 @@ int runTests(int(*testedFunction)(int*, int, int), std::string name)
 						tab[j] = sizes[k] - j;
 				}
 				if (!cases[l]) // sortowanie czesci tablicy
-					quicksort(tab, 0, partSorted[l] * sizes[k]);
-
+					merge_sort(tab, 0, partSorted[l] * sizes[k]);
 
 				mean += testSortingTime(testedFunction, tab, 0, sizes[k]);
-
+				//showPivots(); // pokazanie wynikow wyborow pivota dla quicksorta
 				// sprawdzenie posortowania tablicy
 				if (!checkSorted(tab, sizes[k]))
 				{
