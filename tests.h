@@ -82,9 +82,9 @@ int runTests(int(*testedFunction)(int*, int, int), std::string name)
 #endif // FILE_OUTPUT
 
 	// petla wyboru przypadku (0%, 25% itd.)
-	for (int l = 0; l < 8; l++)
-	{
-	//int l = 0; // wybor szczegolnego
+	//for (int l = 0; l < 8; l++)
+	//{
+	int l = 7; // wybor szczegolnego
 		// wypisanie przypadku
 		if (cases[l])
 		{
